@@ -127,7 +127,6 @@ const usersControllers = {
     }
     // check data user with id
     const checkUser = await usersModels.checkDataUserWithId(id)
-    console.log(checkUser)
     if(checkUser[0].user === 0) {
       const error = new createError(400, 'Wrong Id')
       return next(error)
@@ -147,14 +146,12 @@ const usersControllers = {
       currentLocation,
       bio
     }  
-    // check if object value is empty
+    // check if object value is empty then delete if empty
     for (var propName in data) {
         if (data[propName] === null || data[propName] === undefined || !data[propName]) {
           delete data[propName];
         }
       }
-
-    console.log('data :>> ', data);
 
     if(Object.keys(data).length === 0 ) {
       const error = new createError(400, 'Nothing to update')

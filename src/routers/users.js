@@ -18,4 +18,5 @@ router
   .post('/forgot-password', sendEmailForgotPassword)
   .delete('/:id', deleteUser)
   .patch('/:id', updateUser)
+  
 module.exports = router
