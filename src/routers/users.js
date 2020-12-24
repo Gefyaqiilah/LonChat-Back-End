@@ -8,7 +8,8 @@ const {
   getUserById,
   sendEmailForgotPassword,
   deleteUser,
-  updateUser
+  updateUser,
+  login
 } = usersControllers
 
 router
@@ -18,5 +19,5 @@ router
   .post('/forgot-password', sendEmailForgotPassword)
   .delete('/:id', deleteUser)
   .patch('/:id', updateUser)
-  
+  .post('/login', login)
 module.exports = router

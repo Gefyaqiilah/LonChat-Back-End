@@ -1,11 +1,13 @@
 const createError = require('http-errors')
 const { v4: uuidv4 } = require('uuid')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const usersModels = require('../models/users')
 const response = require('../helpers/response')
 const pagination = require('../helpers/pagination')
 const sendEmailForgotPassword = require('../helpers/sendEmailForgotPassword')
+const { access } = require('fs')
 
 const usersControllers = {
   userRegister: async (req, res, next) => {
@@ -104,8 +106,8 @@ const usersControllers = {
       const error = new createError(400, error)
       return next(error)
     }
-    // check data user with id
-    const checkUser = await usersModels.checkDataUserWithId(id)
+    // check data user with id (field, data)
+    const checkUser = await usersModels.checkDataUserByField('id', id)
     if(checkUser[0].user === 0) {
       const error = new createError(400, 'Wrong Id')
       return next(error)
@@ -125,8 +127,8 @@ const usersControllers = {
       const error = new createError(400, 'Id cannot be empty')
       return next(error)
     }
-    // check data user with id
-    const checkUser = await usersModels.checkDataUserWithId(id)
+    // check data user with id (field, data)
+    const checkUser = await usersModels.checkDataUserByField('id', id)
     if(checkUser[0].user === 0) {
       const error = new createError(400, 'Wrong Id')
       return next(error)
@@ -164,6 +166,35 @@ const usersControllers = {
       const error = new createError(500, 'Looks like server having trouble')
       return next(error)
     })
+  },
+  login: async (req, res, next) => {
+    const { email, password } = req.body
+    if(!email || !password) {
+      const error = new createError(400, 'Email or Password cannot be empty')
+      return next(error)
+    }
+    const checkEmail = await usersModels.login(email)
+    if(checkEmail.length === 0) {
+      const error = new createError(400, 'Invalid email or password')
+      return next(error)
+    }
+    const dataUser = checkEmail[0]
+    console.log(dataUser)
+    const match = await bcrypt.compare(password, dataUser.password);
+    if(!match) {
+      const error = new createError(400, 'Invalid email or password')
+      return next(error)
+    }
+    // delete password object
+    delete dataUser.password
+
+    const accessToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.ACCESS_TOKEN_PASSWORD)
+    const refreshToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.REFRESH_TOKEN_PASSWORD)
+    if(!accessToken || !refreshToken) {
+      const error = new createError(500, 'Generate token failed')
+      return next(error)  
+    }
+    response(res, { accessToken, refreshToken }, { status: 'succeed', statusCode: 200 }, null)
   }
 }
 

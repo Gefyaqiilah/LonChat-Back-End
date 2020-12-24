@@ -7,8 +7,8 @@ const usersModels = {
   checkRegisteredEmail: (email) => {
     return actionQuery('SELECT email FROM users WHERE email = ?', email)
   },
-  checkDataUserWithId: (id) => {
-    return actionQuery('SELECT COUNT(*) as user FROM users WHERE id = ? ', id)
+  checkDataUserByField: (field, dataSearch) => {
+    return actionQuery(`SELECT COUNT(*) as user FROM users WHERE ${field} = ? `, dataSearch)
   },
   getAllUser: (limit, offset, order, username) => {
     if(username) {
@@ -28,6 +28,12 @@ const usersModels = {
   },
   updateUser: (id, data) => {
     return actionQuery('UPDATE users SET ? WHERE id = ?', [data, id])
+  },
+  login: (email) => {
+    return actionQuery(`SELECT id, username, name, email, password, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE email = ?`, email)
+  },
+  getDataUserByEmail: (email) => {
+    return actionQuery(`SELECT username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE email`)
   }
 }
 
