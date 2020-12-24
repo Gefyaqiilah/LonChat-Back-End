@@ -174,6 +174,7 @@ const usersControllers = {
       return next(error)
     }
     const checkEmail = await usersModels.login(email)
+  
     if(checkEmail.length === 0) {
       const error = new createError(400, 'Invalid email or password')
       return next(error)
@@ -195,6 +196,28 @@ const usersControllers = {
       return next(error)  
     }
     response(res, { accessToken, refreshToken }, { status: 'succeed', statusCode: 200 }, null)
+  },
+  updatePhotoProfile (req, res, next) {
+    const { id } = req.params
+    if(!id) {
+      const error = new createError(400, 'Id cannot be empty')
+      return next(error)
+    }
+    if(!req.file) {
+      const error = new createError(400, 'Photo Profile cannot be empty')
+      return next(error)
+    }
+    const data = {
+      photoProfile:`${process.env.BASE_URL}/photo/${req.file.filename}`,
+      updatedAt: new Date()
+    }
+    usersModels.updateUser(id, data)
+    .then(() => {
+      response(res, 'photo profile successfully updated', { status: 'succeed', statusCode: 200 }, null)
+    }).catch(() => {
+      const error = new createError(500, 'Looks like server having trouble')
+      return next(error)
+    })
   }
 }
 

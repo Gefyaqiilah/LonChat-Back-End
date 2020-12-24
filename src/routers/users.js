@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const { uploadMulter } = require('../middleware/uploadImage');
 
 const usersControllers = require('../controllers/users')
 const {
@@ -9,7 +10,8 @@ const {
   sendEmailForgotPassword,
   deleteUser,
   updateUser,
-  login
+  login,
+  updatePhotoProfile
 } = usersControllers
 
 router
@@ -20,4 +22,5 @@ router
   .delete('/:id', deleteUser)
   .patch('/:id', updateUser)
   .post('/login', login)
+  .patch('/photo-profile/:id',uploadMulter.single('photoProfile'), updatePhotoProfile)
 module.exports = router
