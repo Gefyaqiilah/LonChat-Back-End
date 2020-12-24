@@ -180,7 +180,6 @@ const usersControllers = {
       return next(error)
     }
     const dataUser = checkEmail[0]
-    console.log(dataUser)
     const match = await bcrypt.compare(password, dataUser.password);
     if(!match) {
       const error = new createError(400, 'Invalid email or password')
@@ -189,8 +188,8 @@ const usersControllers = {
     // delete password object
     delete dataUser.password
 
-    const accessToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.ACCESS_TOKEN_PASSWORD)
-    const refreshToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.REFRESH_TOKEN_PASSWORD)
+    const accessToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.ACCESS_TOKEN_KEY)
+    const refreshToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.REFRESH_TOKEN_KEY)
     if(!accessToken || !refreshToken) {
       const error = new createError(500, 'Generate token failed')
       return next(error)  

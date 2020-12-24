@@ -1,8 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const { uploadMulter } = require('../middleware/uploadImage');
 
+const { uploadMulter } = require('../middleware/uploadImage');
 const usersControllers = require('../controllers/users')
+const authenticationToken = require('../helpers/authentication');
+const authorizationUser = require('../helpers/authorizationUser');
+
 const {
   userRegister,
   getUser,
@@ -15,12 +18,12 @@ const {
 } = usersControllers
 
 router
-  .get('/', getUser)
-  .get('/:id', getUserById)
+  .get('/', authenticationToken, authorizationUser, getUser)
+  .get('/:id', authenticationToken, authorizationUser, getUserById)
   .post('/register', userRegister)
   .post('/forgot-password', sendEmailForgotPassword)
-  .delete('/:id', deleteUser)
-  .patch('/:id', updateUser)
+  .delete('/:id', authenticationToken, deleteUser)
+  .patch('/:id', authenticationToken, authorizationUser, updateUser)
   .post('/login', login)
-  .patch('/photo-profile/:id',uploadMulter.single('photoProfile'), updatePhotoProfile)
+  .patch('/photo-profile/:id', authenticationToken, authorizationUser, uploadMulter.single('photoProfile'), updatePhotoProfile)
 module.exports = router

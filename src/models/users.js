@@ -31,6 +31,9 @@ const usersModels = {
   },
   login: (email) => {
     return actionQuery(`SELECT id, username, name, email, password, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE email = ?`, email)
+  },
+  searchRoleId: (id) => {
+    return actionQuery(`SELECT roleId FROM users WHERE id = ?`, id)
   }
 }
 
