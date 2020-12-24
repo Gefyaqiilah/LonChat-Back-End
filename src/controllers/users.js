@@ -7,7 +7,7 @@ const usersModels = require('../models/users')
 const response = require('../helpers/response')
 const pagination = require('../helpers/pagination')
 const sendEmailForgotPassword = require('../helpers/sendEmailForgotPassword')
-const { access } = require('fs')
+const fs = require('fs')
 
 const usersControllers = {
   userRegister: async (req, res, next) => {
@@ -206,17 +206,41 @@ const usersControllers = {
       const error = new createError(400, 'Photo Profile cannot be empty')
       return next(error)
     }
-    const data = {
-      photoProfile:`${process.env.BASE_URL}/photo/${req.file.filename}`,
-      updatedAt: new Date()
-    }
-    usersModels.updateUser(id, data)
-    .then(() => {
-      response(res, 'photo profile successfully updated', { status: 'succeed', statusCode: 200 }, null)
-    }).catch(() => {
-      const error = new createError(500, 'Looks like server having trouble')
-      return next(error)
-    })
+
+    usersModels.getUserById(id)
+      .then( results => {
+        if (results.length === 0) {
+          const error = new createError(404, `ID Not Found`)
+          return next(error)
+        }
+        const dataResults = results[0]
+
+        const oldImage = dataResults.photoProfile
+        if (oldImage) {
+          const replaceString = oldImage.replace(`${process.env.BASE_URL}/photo/`, '')
+          fs.unlink(`./uploads/${replaceString}`, err => {
+            if (err) {
+              const error = new createError(500, 'Failed to delete old photos')
+              return next(error)
+            }
+          })
+        }
+        const data = {
+          photoProfile:`${process.env.BASE_URL}/photo/${req.file.filename}`,
+          updatedAt: new Date()
+        }
+        usersModels.updateUser(id, data)
+        .then(() => {
+          response(res, 'photo profile successfully updated', { status: 'succeed', statusCode: 200 }, null)
+        }).catch(() => {
+          const error = new createError(500, 'Looks like server having trouble')
+          return next(error)
+        })
+      })
+      .catch(() => {
+        const error = new createError(500, `Looks like server having trouble`)
+        return next(error)
+      })
   }
 }
 
