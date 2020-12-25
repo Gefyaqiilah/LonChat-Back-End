@@ -21,13 +21,16 @@ const usersModels = {
     return actionQuery(`SELECT COUNT(*)as totalData FROM ${table}`)
   },
   getUserById: (id) => {
-    return actionQuery('SELECT username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE id = ? ', id)
+    return actionQuery('SELECT id, username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE id = ? ', id)
   },
   deleteUser: (id) => {
     return actionQuery(`DELETE FROM users WHERE id = ?`, id)
   },
   updateUser: (id, data) => {
     return actionQuery('UPDATE users SET ? WHERE id = ?', [data, id])
+  },
+  confirmPasswordByEmail: (email, data) => {
+    return actionQuery('UPDATE users SET ? WHERE email = ?', [data, email])
   },
   login: (email) => {
     return actionQuery(`SELECT id, username, name, email, password, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE email = ?`, email)

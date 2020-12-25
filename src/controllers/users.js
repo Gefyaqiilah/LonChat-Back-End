@@ -68,6 +68,7 @@ const usersControllers = {
   },
   getUserById: (req, res, next) => {
     const id = req.params.id
+    console.log(id)
     if(!id){
       const error = new createError(400, 'Id user cannot be empty')
       return next(error)
@@ -146,7 +147,8 @@ const usersControllers = {
       status,
       idMessage,
       currentLocation,
-      bio
+      bio,
+      updatedAt: new Date()
     }  
     // check if object value is empty then delete if empty
     for (var propName in data) {
@@ -176,19 +178,19 @@ const usersControllers = {
     const checkEmail = await usersModels.login(email)
   
     if(checkEmail.length === 0) {
-      const error = new createError(400, 'Invalid email or password')
+      const error = new createError(401, 'Invalid email or password')
       return next(error)
     }
     const dataUser = checkEmail[0]
     const match = await bcrypt.compare(password, dataUser.password);
     if(!match) {
-      const error = new createError(400, 'Invalid email or password')
+      const error = new createError(401, 'Invalid email or password')
       return next(error)
     }
     // delete password object
     delete dataUser.password
 
-    const accessToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.ACCESS_TOKEN_KEY)
+    const accessToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.ACCESS_TOKEN_KEY, { expiresIn: '7d' })
     const refreshToken = await jwt.sign({ id: dataUser.id, email: dataUser.email }, process.env.REFRESH_TOKEN_KEY)
     if(!accessToken || !refreshToken) {
       const error = new createError(500, 'Generate token failed')
@@ -196,7 +198,7 @@ const usersControllers = {
     }
     response(res, { accessToken, refreshToken }, { status: 'succeed', statusCode: 200 }, null)
   },
-  updatePhotoProfile (req, res, next) {
+  updatePhotoProfile: (req, res, next) => {
     const { id } = req.params
     if(!id) {
       const error = new createError(400, 'Id cannot be empty')
@@ -241,6 +243,56 @@ const usersControllers = {
         const error = new createError(500, `Looks like server having trouble`)
         return next(error)
       })
+  },
+  forgotPassword: async (req, res, next) => {
+    const {email, code} = req.body
+    if(!email || !code) {
+      const error = new createError(401, 'Email or Code cannot be empty')
+      return next(error)
+    }
+    const checkEmail = await usersModels.login(email)
+    if(checkEmail.length === 0) {
+      const error = new createError(401, 'Wrong email')
+      return next(error)
+    } else {
+      next()
+    }
+  },
+  confirmPassword: async (req, res, next) => {
+    const email = req.params.email
+    if(!email) {
+      const error = new createError(400, 'email cannot be empty')
+      return next(error)
+    }
+
+    const { password } = req.body 
+    console.log(req.body)
+    bcrypt.genSalt(10, function(err, salt) {
+      bcrypt.hash(password, salt, function(err, hash) {
+        const data = {
+          password: hash,
+          updatedAt: new Date()
+        }  
+        // check if object value is empty then delete if empty
+        for (var propName in data) {
+            if (data[propName] === null || data[propName] === undefined || !data[propName]) {
+              delete data[propName];
+            }
+          }
+    
+        if(Object.keys(data).length === 0 ) {
+          const error = new createError(400, 'Nothing to update')
+          return next(error)
+        }
+        usersModels.confirmPasswordByEmail(email, data)
+        .then(() => {
+          response(res, 'User has been updated', { status: 'succeed', statusCode: 200 }, null)
+        }).catch(() => {
+          const error = new createError(500, 'Looks like server having trouble')
+          return next(error)
+        })
+      })
+    })
   }
 }
 

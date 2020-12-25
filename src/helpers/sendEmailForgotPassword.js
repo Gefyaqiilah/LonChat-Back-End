@@ -115,7 +115,7 @@ var nodemailer = require('nodemailer')
       const message = {
         from: process.env.EMAIL_USERNAME, // sender address
         to: email, // list of receivers
-        subject: "Fprgot Password", // Subject line
+        subject: "Forgot Password", // Subject line
         // text: "Hello world?", // plain text body
         html: emailTemplate, // html body
       }

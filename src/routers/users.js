@@ -14,14 +14,17 @@ const {
   deleteUser,
   updateUser,
   login,
-  updatePhotoProfile
+  updatePhotoProfile,
+  forgotPassword,
+  confirmPassword
 } = usersControllers
 
 router
   .get('/', authenticationToken, authorizationUser, getUser)
   .get('/:id', authenticationToken, authorizationUser, getUserById)
   .post('/register', userRegister)
-  .post('/forgot-password', sendEmailForgotPassword)
+  .post('/forgot-password', forgotPassword , sendEmailForgotPassword)
+  .patch('/forgot-password/:email', confirmPassword)
   .delete('/:id', authenticationToken, deleteUser)
   .patch('/:id', authenticationToken, authorizationUser, updateUser)
   .post('/login', login)
