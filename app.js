@@ -5,7 +5,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser');
 const morgan = require('morgan')
 const socket = require('socket.io')
-
+const moment = require('moment')
 
 const app = express()
 const server = http.createServer(app)
@@ -24,17 +24,20 @@ app.use(bodyParser.json())
 app.use(morgan('dev'))
 
 const usersRoute = require('./src/routers/users')
+const messagesRoute = require('./src/routers/messages')
 // read photo
 app.use('/photo', express.static('./uploads'))
 
 // Grouping endpoint
 app.use('/v1/users', usersRoute)
+app.use('/v1/messages', messagesRoute)
 
 // Error Handling
 app.use((err, req, res, next) => {
     response(res, null, { status: err.status || 'Failed', statusCode: err.statusCode || 400 }, { message: err.message })
 })
 
+const messagesModels = require('./src/models/messages');
 // socket server
 const io = socket(server, {
     cors: {
@@ -47,23 +50,35 @@ io.on("connection", socket => {
         socket.join(data.id)
     })
     socket.on("joinPersonalChat", data => {
+        console.log('join :>> ', data);
         socket.join(data.receiverId)
     })
     socket.on("personalChat", (data, sendBack) => {
         const formatMessage = {
             message: data.message,
-            senderId: data.senderId,
-            receiverId: data.receiverId,
-            time: data.time
+            photo: data.photo,
+            userSenderId: data.userSenderId,
+            userReceiverId: data.userReceiverId,
+            messageStatus:0,
+            time: data.time,
+            createdAt:moment(new Date()).format("L")
         }
-        socket.broadcast.to(data.receiverId).emit('receiveMessage', formatMessage)
         sendBack(formatMessage)
+        socket.broadcast.to(data.userReceiverId).emit('receiveMessage', formatMessage)
+        messagesModels.insertMessage(formatMessage)
+        .then(() => {
+            
+        }).catch((err) => {
+            console.log('err :>> ', err);
+        })
         console.log('formatMessage :>> ', formatMessage);
     })
     socket.on("leave", (data) => {
-        socket.leave(data.receiverId)
+        console.log('leave :>> ', data)
+        socket.leave(data)
     })
     socket.on("disconnect", () => {
+        console.log(' >> ' )
        });
 })
 
