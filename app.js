@@ -3,7 +3,9 @@ const express = require('express')
 const http = require('http')
 const cors = require('cors')
 const bodyParser = require('body-parser');
-const morgan = require('morgan');
+const morgan = require('morgan')
+const socket = require('socket.io')
+
 
 const app = express()
 const server = http.createServer(app)
@@ -21,7 +23,9 @@ app.use(bodyParser.json())
 
 app.use(morgan('dev'))
 
-const usersRoute = require('./src/routers/users');
+const usersRoute = require('./src/routers/users')
+// read photo
+app.use('/photo', express.static('./uploads'))
 
 // Grouping endpoint
 app.use('/v1/users', usersRoute)
@@ -29,6 +33,38 @@ app.use('/v1/users', usersRoute)
 // Error Handling
 app.use((err, req, res, next) => {
     response(res, null, { status: err.status || 'Failed', statusCode: err.statusCode || 400 }, { message: err.message })
+})
+
+// socket server
+const io = socket(server, {
+    cors: {
+        origin: '*'
+    }
+})
+
+io.on("connection", socket => {
+    socket.on("loginRoomSelf", data => {
+        socket.join(data.id)
+    })
+    socket.on("joinPersonalChat", data => {
+        socket.join(data.receiverId)
+    })
+    socket.on("personalChat", (data, sendBack) => {
+        const formatMessage = {
+            message: data.message,
+            senderId: data.senderId,
+            receiverId: data.receiverId,
+            time: data.time
+        }
+        socket.broadcast.to(data.receiverId).emit('receiveMessage', formatMessage)
+        sendBack(formatMessage)
+        console.log('formatMessage :>> ', formatMessage);
+    })
+    socket.on("leave", (data) => {
+        socket.leave(data.receiverId)
+    })
+    socket.on("disconnect", () => {
+       });
 })
 
 server.listen(PORT, () => console.log('Server running on port: ', PORT))

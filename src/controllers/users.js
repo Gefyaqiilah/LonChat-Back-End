@@ -136,6 +136,7 @@ const usersControllers = {
     }
 
     const { username, name, email, phoneNumber, password, photoProfile, emailVerification, status, idMessage, currentLocation, bio  } = req.body 
+    console.log('req.body :>> ', req.body);
     const data = {
       username,
       name,
@@ -161,6 +162,7 @@ const usersControllers = {
       const error = new createError(400, 'Nothing to update')
       return next(error)
     }
+    console.log('data :>> ', data);
     usersModels.updateUser(id, data)
     .then(() => {
       response(res, 'User has been updated', { status: 'succeed', statusCode: 200 }, null)

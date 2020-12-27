@@ -12,9 +12,9 @@ const usersModels = {
   },
   getAllUser: (limit, offset, order, username) => {
     if(username) {
-      return actionQuery('SELECT username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE username LIKE ?', `%${username}%`)
+      return actionQuery('SELECT id, username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE username LIKE ?', `%${username}%`)
     } else {
-      return actionQuery(`SELECT username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users  ORDER BY createdAt ${order} LIMIT ${offset},${limit}`)
+      return actionQuery(`SELECT id, username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users  ORDER BY createdAt ${order} LIMIT ${offset},${limit}`)
     }
   },
   countDataTable: (table) => {
