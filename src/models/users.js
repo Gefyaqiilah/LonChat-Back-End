@@ -10,11 +10,11 @@ const usersModels = {
   checkDataUserByField: (field, dataSearch) => {
     return actionQuery(`SELECT COUNT(*) as user FROM users WHERE ${field} = ? `, dataSearch)
   },
-  getAllUser: (limit, offset, order, username) => {
+  getAllUser: (order, username) => {
     if(username) {
       return actionQuery('SELECT id, username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users WHERE username LIKE ?', `%${username}%`)
     } else {
-      return actionQuery(`SELECT id, username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users  ORDER BY createdAt ${order} LIMIT ${offset},${limit}`)
+      return actionQuery(`SELECT id, username, name, email, phoneNumber, photoProfile, status, idMessage, currentLocation, bio FROM users  ORDER BY createdAt ${order}`)
     }
   },
   countDataTable: (table) => {

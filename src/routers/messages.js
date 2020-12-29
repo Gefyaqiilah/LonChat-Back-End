@@ -4,10 +4,10 @@ const router = express.Router()
 const messagesControllers = require('../controllers/messages')
 
 const {
-  getAllMessageById
+  getAllMessageByUserSenderIdAndUserReceiverId
 } = messagesControllers
 
 router
-  .get('/:id', getAllMessageById)
+  .post('/', getAllMessageByUserSenderIdAndUserReceiverId)
   
 module.exports = router

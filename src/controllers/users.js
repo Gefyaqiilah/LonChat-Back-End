@@ -47,16 +47,16 @@ const usersControllers = {
   })
   },
   getUser: async (req, res, next) => {
-    const { limit = 4, page = 1, order = "DESC" } = req.query
-    const offset = (parseInt(page) - 1) * parseInt(limit)
-    const username = req.query.username || null
+    const { order="DESC" } = req.query
+    // const { limit = 4, page = 1, order = "DESC" } = req.query
+    // const offset = (parseInt(page) - 1) * parseInt(limit)
+    // const username = req.query.username || null
 
     // pagination (limit, page, endpoint, table)
-    const setPagination = await pagination(limit, page, "users", "users")
-    usersModels.getAllUser(limit, offset, order, username)
+    // const setPagination = await pagination(limit, page, "users", "users")
+    usersModels.getAllUser(order)
       .then(results => {
         const setResults = {
-          pagination: setPagination,
           users: results
         }
         response(res, setResults, { status: 'succeed', statusCode: 200 }, null)

@@ -37,7 +37,8 @@ app.use((err, req, res, next) => {
     response(res, null, { status: err.status || 'Failed', statusCode: err.statusCode || 400 }, { message: err.message })
 })
 
-const messagesModels = require('./src/models/messages');
+const messagesModels = require('./src/models/messages')
+const usersModels = require('./src/models/users')
 // socket server
 const io = socket(server, {
     cors: {
@@ -47,10 +48,16 @@ const io = socket(server, {
 
 io.on("connection", socket => {
     socket.on("loginRoomSelf", data => {
-        socket.join(data.id)
+        // update status to online
+        usersModels.updateUser(data.id, { status: 'online' })
+        .then(() => {
+            socket.join(data.id)
+            console.log('socket.rooms :>> ', socket.rooms);
+        }).catch(() => {
+            
+        })
     })
     socket.on("joinPersonalChat", data => {
-        console.log('join :>> ', data);
         socket.join(data.receiverId)
     })
     socket.on("personalChat", (data, sendBack) => {
@@ -64,22 +71,31 @@ io.on("connection", socket => {
             createdAt:moment(new Date()).format("L")
         }
         sendBack(formatMessage)
-        socket.broadcast.to(data.userReceiverId).emit('receiveMessage', formatMessage)
+        socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)
         messagesModels.insertMessage(formatMessage)
         .then(() => {
             
         }).catch((err) => {
-            console.log('err :>> ', err);
         })
-        console.log('formatMessage :>> ', formatMessage);
     })
     socket.on("leave", (data) => {
-        console.log('leave :>> ', data)
+        console.log('logout dari room:>> ', data)
+        console.log('socket.rooms before:>> ', socket.rooms)       
         socket.leave(data)
+        console.log('socket.rooms after:>> ', socket.rooms)       
     })
-    socket.on("disconnect", () => {
-        console.log(' >> ' )
-       });
+    socket.on("logout", (data) => {
+        console.log('data :>> ', data);
+        // update status to offline
+        usersModels.updateUser(data.userSenderId, { status: 'offline' })
+        .then(() => {
+            console.log('berhasil offline');
+            socket.disconnect()
+        })
+    })
+    socket.on("disconnect", (data) => {
+        console.log('disconnect')
+    });
 })
 
 server.listen(PORT, () => console.log('Server running on port: ', PORT))

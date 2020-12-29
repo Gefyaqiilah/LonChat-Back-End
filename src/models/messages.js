@@ -4,8 +4,8 @@ const messagesModels = {
   insertMessage: (data) => {
     return actionQuery('INSERT INTO messages SET ?', data)
   },
-  getAllMessageById: (id) => {
-    return actionQuery('SELECT * FROM messages WHERE userSenderId = ? OR userReceiverId = ?', [id, id])
+  getAllMessageById: (userSenderId, userReceiverId) => {
+    return actionQuery(`SELECT * FROM messages WHERE userSenderId IN ('${userSenderId}', '${userReceiverId}') AND userReceiverId IN ('${userSenderId}', '${userReceiverId}')`)
   }
 }
 

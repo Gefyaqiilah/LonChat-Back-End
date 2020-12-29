@@ -5,13 +5,13 @@ const messagesModels = require('../models/messages');
 const response = require('../helpers/response')
 
 const messagesControllers = {
-  getAllMessageById (req, res, next) {
-    id = req.params.id
-    if (!id) {
+  getAllMessageByUserSenderIdAndUserReceiverId (req, res, next) {
+    const { userSenderId, userReceiverId } = req.body
+    if (!userSenderId || !userReceiverId) {
       const error = new createError(400, 'Id cannot be empty')
       return next(error)
     }
-    messagesModels.getAllMessageById(id)
+    messagesModels.getAllMessageById(userSenderId, userReceiverId)
     .then((result) => {
       response(res, result, {status:'succeed', statusCode: 200}, null)
     }).catch(() => {
