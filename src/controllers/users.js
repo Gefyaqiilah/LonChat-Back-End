@@ -295,6 +295,22 @@ const usersControllers = {
         })
       })
     })
+  },
+  searchUser (req, res, next) {
+    console.log('masuk search user')
+    const search = req.query.search
+    if(!search) {
+      const error = new createError(400, 'Data Search cannot be empty')
+      return next(error)
+    }
+    usersModels.searchUser(search)
+    .then((result) => {
+      response(res, { search: result }, { status: 'succeed', statusCode: 200 }, null)
+    }).catch((err) => {
+      console.log('err :>> ', err);
+      const error = new createError(500, 'Looks like server having trouble')
+      return next(error)
+    })
   }
 }
 

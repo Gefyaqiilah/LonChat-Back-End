@@ -16,17 +16,19 @@ const {
   login,
   updatePhotoProfile,
   forgotPassword,
-  confirmPassword
+  confirmPassword,
+  searchUser
 } = usersControllers
 
 router
-  .get('/', authenticationToken, authorizationUser, getUser)
-  .get('/:id', authenticationToken, authorizationUser, getUserById)
-  .post('/register', userRegister)
-  .post('/forgot-password', forgotPassword , sendEmailForgotPassword)
-  .patch('/forgot-password/:email', confirmPassword)
-  .delete('/:id', authenticationToken, deleteUser)
-  .patch('/:id', authenticationToken, authorizationUser, updateUser)
-  .post('/login', login)
-  .patch('/photo-profile/:id', authenticationToken, authorizationUser, uploadMulter.single('photoProfile'), updatePhotoProfile)
+.get('/search', searchUser)
+.get('/', authenticationToken, authorizationUser, getUser)
+.get('/:id', authenticationToken, authorizationUser, getUserById)
+.post('/register', userRegister)
+.post('/forgot-password', forgotPassword , sendEmailForgotPassword)
+.patch('/forgot-password/:email', confirmPassword)
+.delete('/:id', authenticationToken, deleteUser)
+.patch('/:id', authenticationToken, authorizationUser, updateUser)
+.post('/login', login)
+.patch('/photo-profile/:id', authenticationToken, authorizationUser, uploadMulter.single('photoProfile'), updatePhotoProfile)
 module.exports = router

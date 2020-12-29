@@ -25,13 +25,14 @@ app.use(morgan('dev'))
 
 const usersRoute = require('./src/routers/users')
 const messagesRoute = require('./src/routers/messages')
+const friendsRoute = require('./src/routers/friends')
 // read photo
 app.use('/photo', express.static('./uploads'))
 
 // Grouping endpoint
 app.use('/v1/users', usersRoute)
 app.use('/v1/messages', messagesRoute)
-
+app.use('/v1/friends', friendsRoute)
 // Error Handling
 app.use((err, req, res, next) => {
     response(res, null, { status: err.status || 'Failed', statusCode: err.statusCode || 400 }, { message: err.message })
@@ -89,7 +90,7 @@ io.on("connection", socket => {
         // update status to offline
         usersModels.updateUser(data.userSenderId, { status: 'offline' })
         .then(() => {
-            console.log('berhasil offline');
+            console.log('berhasil offline')
             socket.disconnect()
         })
     })

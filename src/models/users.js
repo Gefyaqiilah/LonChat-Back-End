@@ -37,6 +37,9 @@ const usersModels = {
   },
   searchRoleId: (id) => {
     return actionQuery(`SELECT roleId FROM users WHERE id = ?`, id)
+  },
+  searchUser: (dataSearch) => {
+    return actionQuery(`SELECT * FROM users WHERE username LIKE ? OR phoneNumber LIKE ? OR email LIKE ?`, [`${dataSearch}%`, `${dataSearch}%`, `${dataSearch}%`])
   }
 }
 
