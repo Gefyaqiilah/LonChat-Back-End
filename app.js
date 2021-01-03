@@ -39,7 +39,8 @@ app.use((err, req, res, next) => {
 })
 
 const messagesModels = require('./src/models/messages')
-const usersModels = require('./src/models/users')
+const usersModels = require('./src/models/users');
+const { format } = require('./src/configs/db');
 // socket server
 const io = socket(server, {
     cors: {
@@ -50,10 +51,13 @@ const io = socket(server, {
 io.on("connection", socket => {
     socket.on("loginRoomSelf", data => {
         // update status to online
+        socket.join(data.id)
+        socket.broadcast.emit('userOnline', data.id); // everyone gets it but the sender
         usersModels.updateUser(data.id, { status: 'online' })
         .then(() => {
             socket.join(data.id)
-            console.log('socket.rooms :>> ', socket.rooms);
+            socket.broadcast.emit('userSt'); // everyone gets it but the sender
+            console.log('berhasillogin')
         }).catch(() => {
             
         })
@@ -69,29 +73,28 @@ io.on("connection", socket => {
             userReceiverId: data.userReceiverId,
             messageStatus:0,
             time: data.time,
-            createdAt:moment(new Date()).format("L")
+            createdAt:new Date()
         }
+        formatMessage.senderName = data.senderName
         sendBack(formatMessage)
         socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)
+
+        // insert to database
+        delete formatMessage.senderName
         messagesModels.insertMessage(formatMessage)
         .then(() => {
-            
-        }).catch((err) => {
         })
     })
     socket.on("leave", (data) => {
-        console.log('logout dari room:>> ', data)
-        console.log('socket.rooms before:>> ', socket.rooms)       
         socket.leave(data)
-        console.log('socket.rooms after:>> ', socket.rooms)       
     })
     socket.on("logout", (data) => {
-        console.log('data :>> ', data);
         // update status to offline
-        usersModels.updateUser(data.userSenderId, { status: 'offline' })
+        usersModels.updateUser(data, { status: 'offline' })
         .then(() => {
-            console.log('berhasil offline')
+            socket.broadcast.emit('userOffline', data) // everyone gets it but the sender
             socket.disconnect()
+            console.log('berhasil logout')
         })
     })
     socket.on("disconnect", (data) => {
