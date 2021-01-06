@@ -15,6 +15,9 @@ const messagesModels = {
   },
   countUnreadMessage: (userSenderId) => {
     return actionQuery(`SELECT COUNT(case when messages.messageStatus = 0 then 1 else NULL END) AS unreadMessage FROM messages WHERE userSenderId = ?`, userSenderId)
+  },
+  deleteAllMessage: (userSenderId, userReceiverId) => {
+    return actionQuery('DELETE FROM messages WHERE userSenderId = ? AND userReceiverId = ?', [userSenderId, userReceiverId])
   }
 }
 

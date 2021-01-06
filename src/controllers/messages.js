@@ -27,9 +27,9 @@ const messagesControllers = {
     }
     messagesModels.readMessage(userSenderId, userReceiverId)
     .then((result) => {
-    console.log('berhasil mngubah :>> ', result);
+    console.log('berhasil membaca message')
     }).catch((err) => {
-    console.log('err :>> ', err);
+    console.log('gagal membaca message :>> ', err);
     })
   },
   lastMessageSender: async (req, res, next) => {
@@ -45,6 +45,20 @@ const messagesControllers = {
       ...resultUnreadMessage[0]
     }
     response(res, resultCopy, {status:'succeed', statusCode: 200}, null)
+  },
+  deleteAllMessage: async (req, res, next) => {
+    const {userSenderId, userReceiverId} = req.body
+    if (!userSenderId || !userReceiverId) {
+      const error = new createError(400, 'userSenderId or userReceiverId cannot be empty')
+      return next(error)
+    }
+    try {
+      const resultDelete = await messagesModels.deleteAllMessage(userSenderId, userReceiverId)
+      response(res, 'all message has been deleted', { status: 'succeed', statusCode: 200 }, null)
+    } catch (error) {
+      // const resultError = new createError(400,)
+      res.json(error) 
+    }
   }
 }
 module.exports = messagesControllers

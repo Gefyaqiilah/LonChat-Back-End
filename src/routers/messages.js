@@ -6,11 +6,13 @@ const messagesControllers = require('../controllers/messages')
 const {
   getAllMessageByUserSenderIdAndUserReceiverId,
   readMessage,
-  lastMessageSender
+  lastMessageSender,
+  deleteAllMessage
 } = messagesControllers
 
 router
   .post('/', getAllMessageByUserSenderIdAndUserReceiverId)
   .get('/last-message/:id',lastMessageSender)
   .post('/read-message', readMessage)
+  .delete('/delete-all-message', deleteAllMessage)
 module.exports = router

@@ -249,12 +249,12 @@ const usersControllers = {
   forgotPassword: async (req, res, next) => {
     const {email, code} = req.body
     if(!email || !code) {
-      const error = new createError(401, 'Email or Code cannot be empty')
+      const error = new createError(400, 'Email or Code cannot be empty')
       return next(error)
     }
     const checkEmail = await usersModels.login(email)
     if(checkEmail.length === 0) {
-      const error = new createError(401, 'Wrong email')
+      const error = new createError(400, 'Wrong email')
       return next(error)
     } else {
       next()

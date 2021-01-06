@@ -23,10 +23,10 @@ const {
 router
 .get('/search', searchUser)
 .patch('/forgot-password/:email', confirmPassword)
+.post('/forgot-password', forgotPassword , sendEmailForgotPassword)
 .get('/', authenticationToken, authorizationUser, getUser)
 .get('/:id', authenticationToken, authorizationUser, getUserById)
 .post('/register', userRegister)
-.post('/forgot-password', forgotPassword , sendEmailForgotPassword)
 .delete('/:id', authenticationToken, deleteUser)
 .patch('/:id', authenticationToken, authorizationUser, updateUser)
 .post('/login', login)
