@@ -15,6 +15,7 @@ const response = require('./src/helpers/response')
 
 app.use(cors())
 
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -64,6 +65,7 @@ io.on("connection", socket => {
     })
     socket.on("joinPersonalChat", data => {
         socket.join(data.receiverId)
+        console.log('ada yang masuk ke room ini:', data)
     })
     socket.on("personalChat", (data, sendBack) => {
         const formatMessage = {
@@ -75,17 +77,25 @@ io.on("connection", socket => {
             time: data.time,
             createdAt:new Date()
         }
-        formatMessage.senderName = data.senderName
-        sendBack(formatMessage)
-        socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)
 
-        // insert to database
-        delete formatMessage.senderName
-        messagesModels.insertMessage(formatMessage)
-        .then(() => {
-        })
+        if (data.photo) {
+            sendBack(formatMessage)
+            formatMessage.senderName = data.senderName
+           return socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)       
+        } else {
+            sendBack(formatMessage)
+            formatMessage.senderName = data.senderName
+            socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)
+            
+            // insert to database
+            delete formatMessage.senderName
+            messagesModels.insertMessage(formatMessage)
+            .then(() => {
+            })
+        }
     })
     socket.on("leave", (data) => {
+        console.log('ada orang yang live di id room: ', data)
         socket.leave(data)
     })
     socket.on("logout", (data) => {

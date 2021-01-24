@@ -27,9 +27,9 @@ const messagesControllers = {
     }
     messagesModels.readMessage(userSenderId, userReceiverId)
     .then((result) => {
-    console.log('berhasil membaca message')
-    }).catch((err) => {
-    console.log('gagal membaca message :>> ', err);
+    response(res, 'message has been readed', { status: 'success', statusCode:'200' }, null)
+    }).catch(() => {
+    next(new createError(500, 'Looks like server having trouble'))
     })
   },
   lastMessageSender: async (req, res, next) => {
@@ -58,6 +58,25 @@ const messagesControllers = {
     } catch (error) {
       // const resultError = new createError(400,)
       res.json(error) 
+    }
+  },
+  postImage: async (req, res, next) => {
+    console.log('this.req.user', req.user)
+    console.log('req.files', req.files)
+    const data = {
+      photo:`${process.env.BASE_URL}/photo/${req.file.filename}`,
+      message: null,
+      userSenderId: req.user.id,
+      userReceiverId: req.body.userReceiverId,
+      messageStatus: 0,
+      time: req.body.time,
+      createdAt: new Date()
+    }
+    try {
+      await messagesModels.insertMessage(data)
+      response(res, data, { status: 'success', statusCode:200 }, null)
+    } catch (error) {
+      next(new createError(500, 'Looks like server having trouble'))
     }
   }
 }

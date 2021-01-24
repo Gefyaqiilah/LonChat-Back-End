@@ -95,7 +95,7 @@ var nodemailer = require('nodemailer')
     
     <body>
       <div class="container">
-        <h1>Telegram App - Gefy</h1>
+        <h1>Lon-Chat App</h1>
         <div class="box mx-auto mt-5 p-5">
           <h2><span style="text-transform:capitalize">Forgot Password Code</span></h2>
           <p class="desc mt-3">This is the code to change your password, paste it directly in the input field</p>
@@ -106,7 +106,7 @@ var nodemailer = require('nodemailer')
               class="email"href="mailto:${process.env.EMAIL_USERNAME}">click in here</a>
           </p>
         </div>
-        <p class="footer">Sent by CoffeeShop Team 1</p>
+        <p class="footer">Sent by Lon-Chat App</p>
       </div>
     </body>
     
