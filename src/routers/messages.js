@@ -14,7 +14,7 @@ const {
 
 router
   .post('/', getAllMessageByUserSenderIdAndUserReceiverId)
-  .get('/last-message/:id',lastMessageSender)
+  .get('/last-message/:id',authenticationToken, lastMessageSender)
   .post('/read-message', readMessage)
   .delete('/delete-all-message', deleteAllMessage)
   .post('/post-image', authenticationToken, uploadMulter.single('photo'), postImage)
