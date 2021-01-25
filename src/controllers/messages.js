@@ -14,7 +14,8 @@ const messagesControllers = {
     messagesModels.getAllMessageById(userSenderId, userReceiverId)
     .then((result) => {
       response(res, result, {status:'succeed', statusCode: 200}, null)
-    }).catch(() => {
+    }).catch((err) => {
+      console.log('err', err)
       const error = new createError(500, 'Looks like server having trouble')
       return next(error)
     })
@@ -57,8 +58,17 @@ const messagesControllers = {
       return next(error)
     }
     try {
-      const resultDelete = await messagesModels.deleteAllMessage(userSenderId, userReceiverId)
-      response(res, 'all message has been deleted', { status: 'succeed', statusCode: 200 }, null)
+      const countBoth = await messagesModels.countVisibilityMessage(userSenderId, userReceiverId, 'BOTH')
+      const countByIdSender = await messagesModels.countVisibilityMessage(userSenderId, userReceiverId, 'USERSENDER')
+      console.log('countBoth', countBoth[0].amount)
+      if (countBoth[0].amount > 0 ) {
+        const resultDelete = await messagesModels.deleteAllMessage(userSenderId, userReceiverId, 'CHANGE VISIBILITY')
+        return response(res, 'all message has been deleted', { status: 'succeed', statusCode: 200 }, null)
+      }
+      if (countByIdSender[0].amount > 0) {
+        const resultDelete = await messagesModels.deleteAllMessage(userSenderId, userReceiverId, 'DELETE MESSAGE')
+        return response(res, 'all message has been deleted', { status: 'succeed', statusCode: 200 }, null)
+      }
     } catch (error) {
       // const resultError = new createError(400,)
       res.json(error) 
