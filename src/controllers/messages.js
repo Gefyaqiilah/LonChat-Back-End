@@ -15,7 +15,6 @@ const messagesControllers = {
     .then((result) => {
       response(res, result, {status:'succeed', statusCode: 200}, null)
     }).catch((err) => {
-      console.log('err', err)
       const error = new createError(500, 'Looks like server having trouble')
       return next(error)
     })
@@ -36,15 +35,12 @@ const messagesControllers = {
   lastMessageSender: async (req, res, next) => {
     const userSenderId = req.params.id
     const userReceiverId = req.user.id
-    console.log('userReceiverId', userReceiverId)
     if(!userSenderId) {
       const error = new createError(400, 'UserSenderId cannot be empty')
       return next(error)
     }
     const resultLastMessage = await messagesModels.lastMessageConversation(userSenderId, userReceiverId)
     const resultUnreadMessage = await messagesModels.countUnreadMessage(userSenderId, userReceiverId)
-    console.log('resultUnreadMessage', resultUnreadMessage)
-    console.log('resultLastMessage', resultLastMessage)
     const resultCopy ={
       ...resultLastMessage[0],
       ...resultUnreadMessage[0]
@@ -60,7 +56,6 @@ const messagesControllers = {
     try {
       const countBoth = await messagesModels.countVisibilityMessage(userSenderId, userReceiverId, 'BOTH')
       const countByIdSender = await messagesModels.countVisibilityMessage(userSenderId, userReceiverId, 'USERSENDER')
-      console.log('countBoth', countBoth[0].amount)
       if (countBoth[0].amount > 0 ) {
         const resultDelete = await messagesModels.deleteAllMessage(userSenderId, userReceiverId, 'CHANGE VISIBILITY')
         return response(res, 'all message has been deleted', { status: 'succeed', statusCode: 200 }, null)
@@ -75,9 +70,6 @@ const messagesControllers = {
     }
   },
   postImage: async (req, res, next) => {
-    console.log('this.req.user', req.user)
-    console.log('req.files', req.files)
-    console.log('req.body.userReceiverId', req.body.userReceiverId)
     const data = {
       photo:`${process.env.BASE_URL}/photo/${req.file.filename}`,
       message: null,

@@ -12,12 +12,12 @@ const friendsControllers = {
     }
     friendsModels.getDataFriendsById(userId)
     .then((result) => {
+      console.log('result', result)
       const data = {
         friends: result
       }
       response(res, data, { status:'success', statusCode:200 }, null)
-    }).catch((err) => {
-      console.log('err :>> ', err);
+    }).catch(() => {
       const error = new createError(500, 'Looks like server having trouble')
       return next(error)
     })

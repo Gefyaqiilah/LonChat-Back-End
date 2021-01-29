@@ -58,14 +58,12 @@ io.on("connection", socket => {
         .then(() => {
             socket.join(data.id)
             socket.broadcast.emit('userSt'); // everyone gets it but the sender
-            console.log('berhasillogin')
         }).catch(() => {
             
         })
     })
     socket.on("joinPersonalChat", data => {
         socket.join(data.receiverId)
-        console.log('ada yang masuk ke room ini:', data)
     })
     socket.on("personalChat", (data, sendBack) => {
         const formatMessage = {
@@ -95,7 +93,6 @@ io.on("connection", socket => {
         }
     })
     socket.on("leave", (data) => {
-        console.log('ada orang yang live di id room: ', data)
         socket.leave(data)
     })
     socket.on("logout", (data) => {
@@ -104,7 +101,7 @@ io.on("connection", socket => {
         .then(() => {
             socket.broadcast.emit('userOffline', data) // everyone gets it but the sender
             socket.disconnect()
-            console.log('berhasil logout')
+            console.log('user logout')
         })
     })
     socket.on("disconnect", (data) => {

@@ -31,6 +31,7 @@ const usersControllers = {
           name: name,
           email: email,
           password:hash,
+          bio: 'Hey there! I am using Lon-Chat',
           createdAt: new Date()
         }
 
@@ -68,7 +69,6 @@ const usersControllers = {
   },
   getUserById: (req, res, next) => {
     const id = req.params.id
-    console.log(id)
     if(!id){
       const error = new createError(400, 'Id user cannot be empty')
       return next(error)
@@ -136,7 +136,6 @@ const usersControllers = {
     }
 
     const { username, name, email, phoneNumber, password, photoProfile, emailVerification, status, idMessage, currentLocation, bio  } = req.body 
-    console.log('req.body :>> ', req.body);
     const data = {
       username,
       name,
@@ -162,7 +161,6 @@ const usersControllers = {
       const error = new createError(400, 'Nothing to update')
       return next(error)
     }
-    console.log('data :>> ', data);
     usersModels.updateUser(id, data)
     .then(() => {
       response(res, 'User has been updated', { status: 'succeed', statusCode: 200 }, null)
@@ -268,7 +266,6 @@ const usersControllers = {
     }
 
     const { password } = req.body 
-    console.log(req.body)
     bcrypt.genSalt(10, function(err, salt) {
       bcrypt.hash(password, salt, function(err, hash) {
         const data = {
@@ -297,7 +294,6 @@ const usersControllers = {
     })
   },
   searchUser (req, res, next) {
-    console.log('masuk search user')
     const search = req.query.search
     if(!search) {
       const error = new createError(400, 'Data Search cannot be empty')
@@ -306,8 +302,7 @@ const usersControllers = {
     usersModels.searchUser(search)
     .then((result) => {
       response(res, { search: result }, { status: 'succeed', statusCode: 200 }, null)
-    }).catch((err) => {
-      console.log('err :>> ', err);
+    }).catch(() => {
       const error = new createError(500, 'Looks like server having trouble')
       return next(error)
     })
