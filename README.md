@@ -4,7 +4,7 @@
 </p>
 
 
-LonChat-Backend is a backend for Kebon.id frontend application. Built with NodeJs using the ExpressJs Framework.
+LonChat-Backend is a backend for LonChat application. Built with NodeJs using the ExpressJs Framework.
 Express.js is a web application framework for Node.js. [More about Express](https://en.wikipedia.org/wiki/Express.js)
 ## Built With
 [![Express.js](https://img.shields.io/badge/Express-4.17.1-brightgreen)](https://expressjs.com/en/starter/installing.html)
@@ -19,7 +19,8 @@ Express.js is a web application framework for Node.js. [More about Express](http
 
 ## How to run the app ?
 1. Open app's directory in CMD or Terminal
-2. Type `npm install`
+2. Type 
+```npm install```
 3. Make new file a called **.env**, set up first [here](#set-up-env-file)
 4. Turn on Apache and MYSQL Server using xampp, etc.
 5. Create a database with the name **lonchat** then  import file **lonchat.sql** in directory root/database to [phpmyadmin](http://localhost/phpmyadmin)
@@ -46,7 +47,7 @@ REFRESH_TOKEN_KEY = [YOUR_REFRESH_TOKEN_KEY]
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/2decdaacaa9676a0dc3a)
 ## Related Project
 
-- [`LonChat-Frontend`](https://github.com/Gefyaqiilah/LonChat-Front-End)
+- [LonChat-Frontend](https://github.com/Gefyaqiilah/LonChat-Front-End)
 
 <!-- CONTACT -->
 ## Contact
