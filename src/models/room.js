@@ -9,6 +9,9 @@ const roomModels = {
   },
   checkRoomMember: (payload) => {
     return actionQuery('SELECT * FROM room_member WHERE userId = ? AND roomId = ?', [payload.userId, payload.roomId])
+  },
+  newMessage: (payload) => {
+    return actionQuery('INSERT INTO room_message SET ?', payload)
   }
 }
 

@@ -41,6 +41,31 @@ const roomControllers = {
       console.log('error add member', error)
       next(new createError(500, 'Looks like server having trouble'))
     }
+  },
+  newMessage: async (req, res, next) => {
+    const payload = {
+      roomId: parseInt(req.body.roomId),
+      userSenderId: req.user.id,
+      message: req.body.message,
+      photo: req.file ? `${process.env.BASE_URL}/photo/${req.file.filename}` : '',
+      time: new Date(),
+      messageStatus: 0,
+      notVisibleTo: '[]',
+      createdAt: new Date()
+    }
+    console.log('payload', payload)
+    if (!payload.roomId) {
+      next(new createError(400, 'roomId cannot be empty'))
+    } else if (!req.body.message && !req.file) {
+      next(new createError(400, 'nothing message or photo was sent'))
+    }
+    try {
+     await roomModels.newMessage(payload)
+     response(res, 'message has been sent', { status: 'succeed', statusCode: 200 }, null)
+    } catch (error) {
+      console.log('error', error)
+      next(new createError(500, 'Looks like server having trouble'))
+    }
   }
 }
 
