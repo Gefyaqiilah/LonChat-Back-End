@@ -13,37 +13,37 @@ const io = socket => {
     }).catch(() => {
         
     })
-})
-socket.on("joinPersonalChat", data => {
-    socket.join(data.receiverId)
-})
-socket.on("personalChat", (data, sendBack) => {
-    const formatMessage = {
-        message: data.message,
-        photo: data.photo,
-        userSenderId: data.userSenderId,
-        userReceiverId: data.userReceiverId,
-        messageStatus:0,
-        time: data.time,
-        createdAt:new Date()
-    }
-
-    if (data.photo) {
-        sendBack(formatMessage)
-        formatMessage.senderName = data.senderName
-       return socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)       
-    } else {
-        sendBack(formatMessage)
-        formatMessage.senderName = data.senderName
-        socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)
-        
-        // insert to database
-        delete formatMessage.senderName
-        messagesModels.insertMessage(formatMessage)
-        .then(() => {
-        })
-    }
   })
+  socket.on("joinPersonalChat", data => {
+      socket.join(data.receiverId)
+  })
+  socket.on("personalChat", (data, sendBack) => {
+      const formatMessage = {
+          message: data.message,
+          photo: data.photo,
+          userSenderId: data.userSenderId,
+          userReceiverId: data.userReceiverId,
+          messageStatus:0,
+          time: data.time,
+          createdAt:new Date()
+      }
+
+      if (data.photo) {
+          sendBack(formatMessage)
+          formatMessage.senderName = data.senderName
+        return socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)       
+      } else {
+          sendBack(formatMessage)
+          formatMessage.senderName = data.senderName
+          socket.to(data.userReceiverId).emit('receiveMessage', formatMessage)
+          
+          // insert to database
+          delete formatMessage.senderName
+          messagesModels.insertMessage(formatMessage)
+          .then(() => {
+          })
+      }
+    })
   socket.on("leave", (data) => {
       socket.leave(data)
   })
