@@ -4,7 +4,7 @@ const router = express.Router()
 const {
 getDataFriendsById,
 addFriend
-}= require('../controllers/friends')
+}= require('../../controllers/friends')
 
 router
   .get('/:id', getDataFriendsById)

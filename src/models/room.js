@@ -1,8 +1,8 @@
 const { actionQuery } = require('../helpers/actionQuery')
 
 const roomModels = {
-  getRoomsByUserId: () => {
-
+  newRoom: (payload) => {
+    return actionQuery('INSERT INTO rooms SET ?', payload)
   }
 }
 

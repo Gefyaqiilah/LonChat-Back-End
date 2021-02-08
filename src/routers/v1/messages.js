@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
-const messagesControllers = require('../controllers/messages')
-const authenticationToken = require('../helpers/authentication');
-const { uploadMulter } = require('../middleware/uploadImage');
+const messagesControllers = require('../../controllers/messages')
+const authenticationToken = require('../../helpers/authentication');
+const { uploadMulter } = require('../../middleware/uploadImage');
 const {
   getAllMessageByUserSenderIdAndUserReceiverId,
   readMessage,

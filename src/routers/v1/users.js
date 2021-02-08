@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
 
-const { uploadMulter } = require('../middleware/uploadImage');
-const usersControllers = require('../controllers/users')
-const authenticationToken = require('../helpers/authentication');
-const authorizationUser = require('../helpers/authorizationUser');
+const { uploadMulter } = require('../../middleware/uploadImage');
+const usersControllers = require('../../controllers/users')
+const authenticationToken = require('../../helpers/authentication');
+const authorizationUser = require('../../helpers/authorizationUser');
 
 const {
   userRegister,
