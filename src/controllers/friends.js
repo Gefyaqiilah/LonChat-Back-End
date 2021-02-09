@@ -12,7 +12,6 @@ const friendsControllers = {
     }
     friendsModels.getDataFriendsById(userId)
     .then((result) => {
-      console.log('result', result)
       const data = {
         friends: result
       }

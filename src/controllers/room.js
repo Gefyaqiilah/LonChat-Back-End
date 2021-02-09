@@ -10,7 +10,7 @@ const roomControllers = {
     }
     const payload  = {
       name: req.body.name,
-      photo: req.file ? `${process.env.BASE_URL}/photo/${req.file.filename}` : ''
+      photoProfile: req.file ? `${process.env.BASE_URL}/photo/${req.file.filename}` : ''
     }
     try {
       await roomModels.newRoom(payload)
@@ -21,12 +21,12 @@ const roomControllers = {
     }
   },
   addMember: async (req, res, next) => {
-    if (!req.body.userId || !req.body.roomId) {
-      return next(new createError(400, 'UserId or RoomId cannot be empty'))
+    if (!req.body.roomId) {
+      return next(new createError(400, 'RoomId cannot be empty'))
     }
     const payload = {
       roomId: parseInt(req.body.roomId),
-      userId: req.body.userId,
+      userId: req.user.id,
       createdAt: new Date()
     }
     
@@ -76,6 +76,17 @@ const roomControllers = {
       const messages = await roomModels.getMessage({ roomId })
       response(res, messages, {status: 'succeed', statusCode: 200}, null)
     } catch (error) {
+      return next(new createError(500, 'Looks like server having trouble'))
+    }
+  },
+  getRooms: async (req, res, next) => {
+    const userId = req.user.id
+    try {
+      const rooms = await roomModels.getRooms({ userId })
+      console.log('rooms', rooms)
+      res.json(rooms)
+    } catch (error) {
+      console.log('error', error)
       return next(new createError(500, 'Looks like server having trouble'))
     }
   }
