@@ -12,6 +12,15 @@ const roomModels = {
   },
   newMessage: (payload) => {
     return actionQuery('INSERT INTO room_message SET ?', payload)
+  },
+  getMembersRoom: ({roomId}) => {
+    return actionQuery('SELECT userId FROM room_member WHERE roomId = ?', roomId)
+  },
+  getMessage: ({roomId}) => {
+    return actionQuery('SELECT * FROM room_message WHERE roomId = ? ORDER BY createdAt ASC', roomId)
+  },
+  checkMember: ({userId, roomId}) => {
+    return actionQuery('SELECT COUNT(*) AS exist FROM room_member WHERE roomId = ? AND userId = ?', [roomId, userId])
   }
 }
 
