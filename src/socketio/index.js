@@ -18,7 +18,12 @@ const io = socket => {
       socket.join(data.receiverId)
   })
   socket.on("joinRoomChat", data => {
+      console.log('ada orang masuk room ini', data)
       socket.join(data.roomId)
+  })
+  socket.on("roomChat", (data, sendBack) => {
+    sendBack(data)
+    socket.to(data.userReceiverId).emit('receiveMessage', data)
   })
   socket.on("personalChat", (data, sendBack) => {
       const formatMessage = {
@@ -48,6 +53,7 @@ const io = socket => {
       }
     })
   socket.on("leave", (data) => {
+      console.log('ada yang leave >> ', data)
       socket.leave(data)
   })
   socket.on("logout", (data) => {

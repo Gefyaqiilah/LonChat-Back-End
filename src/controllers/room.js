@@ -47,9 +47,9 @@ const roomControllers = {
     const payload = {
       roomId: parseInt(req.body.roomId),
       userSenderId: req.user.id,
-      message: req.body.message,
-      photo: req.file ? `${process.env.BASE_URL}/photo/${req.file.filename}` : '',
-      time: new Date(),
+      message: req.body.message || null,
+      photo: req.file ? `${process.env.BASE_URL}/photo/${req.file.filename}` : null,
+      time: moment(new Date()).format('LT'),
       messageStatus: 0,
       createdAt: new Date()
     }
@@ -60,7 +60,7 @@ const roomControllers = {
     }
     try {
      await roomModels.newMessage(payload)
-     response(res, 'message has been sent', { status: 'succeed', statusCode: 200 }, null)
+     response(res, payload, { status: 'succeed', statusCode: 200 }, null)
     } catch (error) {
       return next(new createError(500, 'Looks like server having trouble'))
     }
