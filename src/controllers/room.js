@@ -1,5 +1,5 @@
 const createError = require('http-errors')
-
+const moment = require('moment');
 const roomModels = require('../models/room');
 const response = require('../helpers/response')
 
@@ -68,6 +68,7 @@ const roomControllers = {
   getMessage: async (req, res, next) => {
     const userId = req.user.id
     const roomId = req.params.roomId
+    console.log('roomId', roomId)
     try {
       const isExist = await roomModels.checkMember({ userId, roomId  })
       if (isExist.length === 0) {
@@ -85,6 +86,25 @@ const roomControllers = {
       const rooms = await roomModels.getRooms({ userId })
       console.log('rooms', rooms)
       res.json(rooms)
+    } catch (error) {
+      console.log('error', error)
+      return next(new createError(500, 'Looks like server having trouble'))
+    }
+  },
+  getLastMessage: async (req, res, next) => {
+    const roomId = req.params.roomId
+    try {
+      const lastMessages = await roomModels.getLastMessage({ roomId })
+      if (lastMessages.length > 0) {
+        const sendResult = lastMessages[0]
+        sendResult.message = sendResult.message ? sendResult.message.substring(0, 20) + '......' : sendResult.message
+        sendResult.lastMessageTime = moment(sendResult.time).format('LT')
+        sendResult.LastMessageTimeStamp = sendResult.createdAt || 0
+        console.log('sendResult', sendResult)
+        return response(res, sendResult, {status: 'succeed', statusCode: 200}, null)
+      }
+      console.log('lastMessages', lastMessages)
+      return response(res, lastMessages, {status: 'succeed', statusCode: 200}, null)
     } catch (error) {
       console.log('error', error)
       return next(new createError(500, 'Looks like server having trouble'))

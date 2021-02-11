@@ -24,6 +24,9 @@ const roomModels = {
   },
   getRooms: ({userId}) => {
     return actionQuery('SELECT rooms.id AS roomId,name, photoProfile, rooms.createdAt AS roomCreated, userId, room_member.createdAt AS joinAt FROM rooms INNER JOIN room_member ON room_member.userId = ? WHERE rooms.id = room_member.roomId', userId)
+  },
+  getLastMessage: ({roomId}) => {
+    return actionQuery('SELECT * FROM room_message WHERE roomId = ? ORDER BY createdAt DESC LIMIT 1', roomId)
   }
 }
 

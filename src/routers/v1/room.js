@@ -3,7 +3,7 @@ const router = express.Router()
 const { uploadMulter } = require('../../middleware/uploadImage')
 const authenticate = require('../../helpers/authentication');
 const {
-  newRoom, addMember, newMessage, getMessage, getRooms
+  newRoom, addMember, newMessage, getMessage, getRooms, getLastMessage
 } = require('../../controllers/room');
 
 router
@@ -12,5 +12,6 @@ router
 .post('/new-message', authenticate, uploadMulter.single('photo') , newMessage)
 .get('/all', authenticate, getRooms)
 .get('/messages/:roomId', authenticate, getMessage)
-
+.get('/last-message/:roomId', authenticate, getLastMessage)
+.get('/detail-room/:roomId', authenticate)
 module.exports = router

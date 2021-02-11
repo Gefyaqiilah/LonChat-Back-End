@@ -17,6 +17,9 @@ const io = socket => {
   socket.on("joinPersonalChat", data => {
       socket.join(data.receiverId)
   })
+  socket.on("joinRoomChat", data => {
+      socket.join(data.roomId)
+  })
   socket.on("personalChat", (data, sendBack) => {
       const formatMessage = {
           message: data.message,
