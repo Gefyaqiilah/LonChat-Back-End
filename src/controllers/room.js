@@ -109,6 +109,20 @@ const roomControllers = {
       console.log('error', error)
       return next(new createError(500, 'Looks like server having trouble'))
     }
+  },
+  getDetailRoom: async (req, res, next) => {
+    const roomId = req.params.roomId
+    try {
+      const detailRoom = await roomModels.getDetailRoom(roomId)
+      const roomMember = await roomModels.getRoomMember(roomId)
+      const sendResult = {
+        ...detailRoom[0],
+        roomMember: roomMember
+      }
+      return response(res, sendResult, {status: 'succeed', statusCode: 200}, null)
+    } catch (error) {
+      return next(new createError(500, 'Looks like server having trouble'))
+    }
   }
 }
 

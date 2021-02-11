@@ -27,6 +27,12 @@ const roomModels = {
   },
   getLastMessage: ({roomId}) => {
     return actionQuery('SELECT * FROM room_message WHERE roomId = ? ORDER BY createdAt DESC LIMIT 1', roomId)
+  },
+  getDetailRoom: roomId => {
+    return actionQuery('SELECT * FROM rooms WHERE id = ? ', roomId)
+  },
+  getRoomMember: roomId => {
+    return actionQuery('SELECT * FROM room_member WHERE roomId = ?', roomId)
   }
 }
 
